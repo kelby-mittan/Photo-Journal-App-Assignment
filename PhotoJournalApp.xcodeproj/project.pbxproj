@@ -15,6 +15,8 @@
 		0279680423DA2F7E006813EF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0279680223DA2F7E006813EF /* LaunchScreen.storyboard */; };
 		0279680F23DA2F7E006813EF /* PhotoJournalAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0279680E23DA2F7E006813EF /* PhotoJournalAppTests.swift */; };
 		0279681E23DA49B0006813EF /* ImageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0279681D23DA49B0006813EF /* ImageKit */; };
+		0279682023DA5BC1006813EF /* AddPhotoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0279681F23DA5BC1006813EF /* AddPhotoController.swift */; };
+		0279682223DA5CEB006813EF /* ImageObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0279682123DA5CEB006813EF /* ImageObject.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +41,8 @@
 		0279680A23DA2F7E006813EF /* PhotoJournalAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhotoJournalAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0279680E23DA2F7E006813EF /* PhotoJournalAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoJournalAppTests.swift; sourceTree = "<group>"; };
 		0279681023DA2F7E006813EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0279681F23DA5BC1006813EF /* AddPhotoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPhotoController.swift; sourceTree = "<group>"; };
+		0279682123DA5CEB006813EF /* ImageObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageObject.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				027967FB23DA2F75006813EF /* JournalController.swift */,
+				0279681F23DA5BC1006813EF /* AddPhotoController.swift */,
 			);
 			path = "Controllers + Cells";
 			sourceTree = "<group>";
@@ -121,6 +126,7 @@
 		0279681B23DA496F006813EF /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				0279682123DA5CEB006813EF /* ImageObject.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -234,6 +240,8 @@
 			files = (
 				027967FC23DA2F75006813EF /* JournalController.swift in Sources */,
 				027967F823DA2F75006813EF /* AppDelegate.swift in Sources */,
+				0279682023DA5BC1006813EF /* AddPhotoController.swift in Sources */,
+				0279682223DA5CEB006813EF /* ImageObject.swift in Sources */,
 				027967FA23DA2F75006813EF /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
