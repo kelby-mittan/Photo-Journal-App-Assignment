@@ -27,4 +27,7 @@ class JournalCell: UICollectionViewCell {
         
     }
     
+    @IBAction func editButtonPressed(_ sender: UIButton) {
+        
+    }
 }
