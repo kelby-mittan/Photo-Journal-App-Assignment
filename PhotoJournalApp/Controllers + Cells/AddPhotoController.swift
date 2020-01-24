@@ -39,15 +39,15 @@ class AddPhotoController: UIViewController {
         textField.delegate = self
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        
-        guard let imageObject = imageObject, let image = UIImage(data: imageObject.imageData) else {
-            return
-        }
-        photoImage.image = image
-        dump(imageObjects)
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(true)
+//
+//        guard let imageObject = imageObject, let image = UIImage(data: imageObject.imageData) else {
+//            return
+//        }
+//        photoImage.image = image
+//        dump(imageObjects)
+//    }
     
     
     @IBAction func cancelButtonPressed(_ sender: UIButton) {
@@ -71,10 +71,10 @@ class AddPhotoController: UIViewController {
         print("original image size is \(image.size)")
         
         // the size for resizing
-//        let size = UIScreen.main.bounds.size
+        //        let size = UIScreen.main.bounds.size
         
         // we will maintain the aspect ratio of the image
-//        let rect = AVMakeRect(aspectRatio: image.size, insideRect: CGRect(origin: CGPoint.zero, size: size))
+        //        let rect = AVMakeRect(aspectRatio: image.size, insideRect: CGRect(origin: CGPoint.zero, size: size))
         
         // resize image
         let resizeImage = image//.resizeImage(to: rect.size.width, height: rect.size.height)
@@ -93,10 +93,10 @@ class AddPhotoController: UIViewController {
         imageObjects.insert(imageObject, at: 0)
         
         // create an indexPath for insertion into collection view
-//        let indexPath = IndexPath(row: 0, section: 0)
+        //        let indexPath = IndexPath(row: 0, section: 0)
         
         // insert new cell into collection view
-//        collectionView.insertItems(at: [indexPath])
+        //        collectionView.insertItems(at: [indexPath])
         
         // persist imageObject to documents directory
         do {
@@ -126,21 +126,24 @@ class AddPhotoController: UIViewController {
             
             self.present(imagePickerController, animated: true, completion: nil)
         }
+        
+//        persistence.removeAll()
+        
     }
     
 }
 
 extension AddPhotoController: UITextFieldDelegate {
-  func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-    
-    textField.resignFirstResponder()
-    
-    imageDescription = textField.text ?? "no event name"
-    
-    textField.text = ""
-    
-    return true
-  }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        textField.resignFirstResponder()
+        
+        imageDescription = textField.text ?? "no event name"
+        
+        textField.text = ""
+        
+        return true
+    }
 }
 
 extension AddPhotoController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -156,6 +159,7 @@ extension AddPhotoController: UIImagePickerControllerDelegate, UINavigationContr
             return
         }
         selectedImage = image
+        photoImage.image = image
         dismiss(animated: true)
     }
 }
