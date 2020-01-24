@@ -36,11 +36,28 @@ class AddPhotoController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        textField.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
         
+        guard let imageObject = imageObject, let image = UIImage(data: imageObject.imageData) else {
+            return
+        }
+        photoImage.image = image
+        dump(imageObjects)
     }
     
     
     @IBAction func cancelButtonPressed(_ sender: UIButton) {
+        do {
+            imageObjects = try persistence.loadItems()
+            dump(imageObjects)
+        } catch {
+            print("oops")
+        }
+        
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -92,7 +109,7 @@ class AddPhotoController: UIViewController {
     @IBAction func libraryButtonPressed(_ sender: UIBarButtonItem) {
         if UIImagePickerController.isSourceTypeAvailable(.photoLibrary){
             
-            imagePickerController.delegate = self as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
+            imagePickerController.delegate = self as UIImagePickerControllerDelegate & UINavigationControllerDelegate
             
             imagePickerController.sourceType = .photoLibrary
             
@@ -103,7 +120,7 @@ class AddPhotoController: UIViewController {
     @IBAction func cameraButtonPressed(_ sender: UIBarButtonItem) {
         if UIImagePickerController.isSourceTypeAvailable(.camera){
             
-            imagePickerController.delegate = self as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
+            imagePickerController.delegate = self as UIImagePickerControllerDelegate & UINavigationControllerDelegate
             
             imagePickerController.sourceType = .camera
             
@@ -120,6 +137,25 @@ extension AddPhotoController: UITextFieldDelegate {
     
     imageDescription = textField.text ?? "no event name"
     
+    textField.text = ""
+    
     return true
   }
+}
+
+extension AddPhotoController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
+            print("image selected not found")
+            return
+        }
+        selectedImage = image
+        dismiss(animated: true)
+    }
 }
