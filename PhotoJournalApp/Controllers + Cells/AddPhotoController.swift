@@ -71,13 +71,13 @@ class AddPhotoController: UIViewController {
         print("original image size is \(image.size)")
         
         // the size for resizing
-        //        let size = UIScreen.main.bounds.size
+        let size = UIScreen.main.bounds.size
         
         // we will maintain the aspect ratio of the image
-        //        let rect = AVMakeRect(aspectRatio: image.size, insideRect: CGRect(origin: CGPoint.zero, size: size))
+        let rect = AVMakeRect(aspectRatio: image.size, insideRect: CGRect(origin: CGPoint.zero, size: size))
         
         // resize image
-        let resizeImage = image//.resizeImage(to: rect.size.width, height: rect.size.height)
+        let resizeImage = image.resizeImage(to: rect.size.width, height: rect.size.height)
         
         
         guard let resizedImageData = resizeImage.jpegData(compressionQuality: 1.0) else {
@@ -161,5 +161,15 @@ extension AddPhotoController: UIImagePickerControllerDelegate, UINavigationContr
         selectedImage = image
         photoImage.image = image
         dismiss(animated: true)
+    }
+}
+
+extension UIImage {
+    func resizeImage(to width: CGFloat, height: CGFloat) -> UIImage {
+        let size = CGSize(width: width, height: height)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { (context) in
+            self.draw(in: CGRect(origin: .zero, size: size))
+        }
     }
 }

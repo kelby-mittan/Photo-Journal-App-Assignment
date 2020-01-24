@@ -16,7 +16,7 @@ class JournalCell: UICollectionViewCell {
 //    public var imageObject: ImageObject?
     
     func configureCell(for photo: ImageObject) {
-        
+        layer.cornerRadius = 20
         descriptionLabel.text = photo.description
         dateLabel.text = photo.date.description
         
