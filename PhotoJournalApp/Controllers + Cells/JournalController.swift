@@ -14,7 +14,11 @@ class JournalController: UIViewController {
     
     @IBOutlet var collectionView: UICollectionView!
     
-    public var imageObjects = [ImageObject]()
+    public var imageObjects = [ImageObject]() {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
     
     public var persistence = DataPersistence<ImageObject>(filename: "images.plist")
     
@@ -132,9 +136,13 @@ extension JournalController: JournalCollection {
 }
 
 extension JournalController: AddPhotoToCollection {
-    func updateCollectionView(images: [ImageObject]) {
-        loadImageObjects()
-        imageObjects = images
+    func updateCollectionView(images: ImageObject) {
+        imageObjects.insert(images, at: 0)
+        do {
+            try persistence.createItem(images)
+        } catch {
+            print("could not create")
+        }
     }
 }
 

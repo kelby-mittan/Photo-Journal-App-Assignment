@@ -11,7 +11,7 @@ import DataPersistence
 import AVFoundation
 
 protocol AddPhotoToCollection {
-    func updateCollectionView(images: [ImageObject])
+    func updateCollectionView(images: ImageObject)
 }
 
 class AddPhotoController: UIViewController {
@@ -46,15 +46,6 @@ class AddPhotoController: UIViewController {
         loadImageObjects()
     }
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(true)
-//
-//        guard let imageObject = imageObject, let image = UIImage(data: imageObject.imageData) else {
-//            return
-//        }
-//        photoImage.image = image
-//        dump(imageObjects)
-//    }
     private func loadImageObjects() {
         do {
             imageObjects = try dataPersistence.loadItems()
@@ -111,7 +102,7 @@ class AddPhotoController: UIViewController {
 //        showJournalVC()
         loadImageObjects()
         
-        photosDelegate?.updateCollectionView(images: imageObjects)
+        photosDelegate?.updateCollectionView(images: imageObject)
         
         self.dismiss(animated: true, completion: nil)
     }
