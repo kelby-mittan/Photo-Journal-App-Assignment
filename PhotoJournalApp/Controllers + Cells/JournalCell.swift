@@ -8,12 +8,19 @@
 
 import UIKit
 
+protocol JournalCollection {
+    func onClickCell(index: Int, photoCell: JournalCell)
+}
+
 class JournalCell: UICollectionViewCell {
     @IBOutlet var photoImage: UIImageView!
     @IBOutlet var descriptionLabel: UILabel!
     @IBOutlet var dateLabel: UILabel!
     
 //    public var imageObject: ImageObject?
+    
+    var cellDelegate: JournalCollection?
+    var index: IndexPath?
     
     func configureCell(for photo: ImageObject) {
         layer.cornerRadius = 20
@@ -28,6 +35,6 @@ class JournalCell: UICollectionViewCell {
     }
     
     @IBAction func editButtonPressed(_ sender: UIButton) {
-        
+        cellDelegate?.onClickCell(index: (index?.row)!, photoCell: self)
     }
 }
