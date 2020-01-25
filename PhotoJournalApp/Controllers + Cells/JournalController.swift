@@ -14,18 +14,29 @@ class JournalController: UIViewController {
     
     @IBOutlet var collectionView: UICollectionView!
     
-    private var imageObjects = [ImageObject]()
+    public var imageObjects = [ImageObject]()
     
     public var persistence = DataPersistence<ImageObject>(filename: "images.plist")
     
     private var selectedIndex: IndexPath?
     
+//    private lazy var addPhotoController: UIViewController = {
+//        guard let photoController = storyboard?.instantiateViewController(identifier: "AddPhotoController") as? AddPhotoController else {
+//            fatalError("could not load nav controller")
+//        }
+//        photoController.dataPersistence = persistence
+//        return photoController
+//    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.dataSource = self
         collectionView.delegate = self
-        
+
         loadImageObjects()
+    }
+    @IBAction func addPhotoButton(_ sender: UIBarButtonItem) {
+        showAddPhotoVC()
     }
     
     private func loadImageObjects() {
@@ -34,6 +45,18 @@ class JournalController: UIViewController {
         } catch {
             print("could not get photos")
         }
+    }
+    
+    private func showAddPhotoVC(_ photo: ImageObject? = nil) {
+        
+        guard let createPhotoController = storyboard?.instantiateViewController(identifier: "AddPhotoController") as? AddPhotoController else {
+            fatalError("could not downcast to CreateEventController")
+        }
+        
+        createPhotoController.imageObject = photo
+        createPhotoController.photosDelegate = self
+        
+        present(createPhotoController, animated: true)
     }
     
     
@@ -107,4 +130,13 @@ extension JournalController: JournalCollection {
         
     }
 }
+
+extension JournalController: AddPhotoToCollection {
+    func updateCollectionView(images: [ImageObject]) {
+        loadImageObjects()
+        imageObjects = images
+    }
+}
+
+
 

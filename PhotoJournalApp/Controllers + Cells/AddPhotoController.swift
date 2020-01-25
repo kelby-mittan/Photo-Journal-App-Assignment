@@ -10,6 +10,10 @@ import UIKit
 import DataPersistence
 import AVFoundation
 
+protocol AddPhotoToCollection {
+    func updateCollectionView(images: [ImageObject])
+}
+
 class AddPhotoController: UIViewController {
     
     @IBOutlet var cancelButton: UIButton!
@@ -21,9 +25,9 @@ class AddPhotoController: UIViewController {
     
     private let imagePickerController = UIImagePickerController()
     
-    public var dataPersistence = PersistenceHelper(filename: "images.plist")
+//    public var dataPersistence: DataPersistence<ImageObject>!
     
-    public var persistence = DataPersistence<ImageObject>(filename: "images.plist")
+    public var dataPersistence = DataPersistence<ImageObject>(filename: "images.plist")
     
     private var imageObjects = [ImageObject]()
     
@@ -33,10 +37,13 @@ class AddPhotoController: UIViewController {
     
     private var selectedImage: UIImage?
     
+    var photosDelegate: AddPhotoToCollection?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         textField.delegate = self
+        loadImageObjects()
     }
     
 //    override func viewWillAppear(_ animated: Bool) {
@@ -48,11 +55,17 @@ class AddPhotoController: UIViewController {
 //        photoImage.image = image
 //        dump(imageObjects)
 //    }
-    
+    private func loadImageObjects() {
+        do {
+            imageObjects = try dataPersistence.loadItems()
+        } catch {
+            print("could not get photos")
+        }
+    }
     
     @IBAction func cancelButtonPressed(_ sender: UIButton) {
         do {
-            imageObjects = try persistence.loadItems()
+            imageObjects = try dataPersistence.loadItems()
             dump(imageObjects)
         } catch {
             print("oops")
@@ -68,7 +81,7 @@ class AddPhotoController: UIViewController {
             return
         }
         
-        print("original image size is \(image.size)")
+//        print("original image size is \(image.size)")
         
         // the size for resizing
         let size = UIScreen.main.bounds.size
@@ -86,24 +99,21 @@ class AddPhotoController: UIViewController {
         
         print("original image size is \(resizeImage.size)")
         
-        // create an image object
         let imageObject = ImageObject(imageData: resizedImageData, date: Date(), description: imageDescription)
         
-        // insert new imageObject into imageObjects
         imageObjects.insert(imageObject, at: 0)
         
-        // create an indexPath for insertion into collection view
-        //        let indexPath = IndexPath(row: 0, section: 0)
-        
-        // insert new cell into collection view
-        //        collectionView.insertItems(at: [indexPath])
-        
-        // persist imageObject to documents directory
         do {
-            try persistence.createItem(imageObject)
+            try dataPersistence.createItem(imageObject)
         } catch {
             print("saving error")
         }
+//        showJournalVC()
+        loadImageObjects()
+        
+        photosDelegate?.updateCollectionView(images: imageObjects)
+        
+        self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func libraryButtonPressed(_ sender: UIBarButtonItem) {
@@ -130,6 +140,19 @@ class AddPhotoController: UIViewController {
 //        persistence.removeAll()
         
     }
+    
+//    private func showJournalVC(_ photos: [ImageObject]? = nil) {
+//
+//        guard let journalController = storyboard?.instantiateViewController(identifier: "JournalController") as? JournalController else {
+//            fatalError("could not downcast to JournalController")
+//        }
+//
+//        guard let photos = photos else { return }
+//        loadImageObjects()
+//        journalController.imageObjects = photos
+//
+//        present(journalController, animated: true)
+//    }
     
 }
 

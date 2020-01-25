@@ -11,7 +11,7 @@
         <!--Journal Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="JournalController" customModule="PhotoJournalApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="JournalController" id="BYZ-38-t0r" customClass="JournalController" customModule="PhotoJournalApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -22,7 +22,7 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="i8Z-yq-hEM"/>
                                     <barButtonItem image="plus" catalog="system" id="9ZB-Nu-4J6">
                                         <connections>
-                                            <segue destination="OjJ-5q-i2U" kind="presentation" id="PiK-qi-bwt"/>
+                                            <action selector="addPhotoButton:" destination="BYZ-38-t0r" id="dHm-8D-h5X"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="ghe-Vq-fqc"/>
@@ -125,13 +125,13 @@
         <!--Add Photo Controller-->
         <scene sceneID="5gP-H0-fHU">
             <objects>
-                <viewController id="OjJ-5q-i2U" customClass="AddPhotoController" customModule="PhotoJournalApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AddPhotoController" id="OjJ-5q-i2U" customClass="AddPhotoController" customModule="PhotoJournalApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="izL-vY-RPS">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nof-Ri-2uD">
-                                <rect key="frame" x="20" y="20" width="53" height="33"/>
+                                <rect key="frame" x="20" y="64" width="53" height="33"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="Cancel"/>
                                 <connections>
@@ -139,7 +139,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HCn-yX-Aon">
-                                <rect key="frame" x="357" y="20" width="37" height="33"/>
+                                <rect key="frame" x="357" y="64" width="37" height="33"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="Save"/>
                                 <connections>
@@ -147,12 +147,12 @@
                                 </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Ygg-Xd-6Qr">
-                                <rect key="frame" x="20" y="63" width="374" height="34"/>
+                                <rect key="frame" x="20" y="107" width="374" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MzP-zt-LyM">
-                                <rect key="frame" x="0.0" y="759" width="414" height="49"/>
+                                <rect key="frame" x="0.0" y="818" width="414" height="44"/>
                                 <items>
                                     <barButtonItem image="photo.fill.on.rectangle.fill" catalog="system" id="WEy-0r-C9B">
                                         <connections>
@@ -168,7 +168,7 @@
                                 </items>
                             </toolbar>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="sBk-NS-muU">
-                                <rect key="frame" x="0.0" y="380" width="414" height="379"/>
+                                <rect key="frame" x="0.0" y="415" width="414" height="403"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
