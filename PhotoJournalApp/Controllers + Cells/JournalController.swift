@@ -137,7 +137,7 @@ extension JournalController: JournalCollection {
 
 extension JournalController: AddPhotoToCollection {
     func updateCollectionView(images: ImageObject) {
-        imageObjects.insert(images, at: 0)
+//        imageObjects.insert(images, at: 0)
         do {
             try persistence.createItem(images)
         } catch {
