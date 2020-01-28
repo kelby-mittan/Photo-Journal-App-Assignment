@@ -10,11 +10,11 @@ import UIKit
 import DataPersistence
 import AVFoundation
 
-protocol AddPhotoToCollection {
-    func updateCollectionView(images: ImageObject)
+protocol AddPhotoToCollection: AnyObject {
+    func updateCollectionView(images: [ImageObject])
 }
 
-class AddPhotoController: UIViewController {
+class AddPhotoController: UIViewController, ImagePhoto {
     
     @IBOutlet var cancelButton: UIButton!
     @IBOutlet var saveButton: UIButton!
@@ -24,12 +24,10 @@ class AddPhotoController: UIViewController {
     @IBOutlet var cameraButton: UIBarButtonItem!
     
     private let imagePickerController = UIImagePickerController()
-    
-//    public var dataPersistence: DataPersistence<ImageObject>!
-    
+        
     public var dataPersistence = DataPersistence<ImageObject>(filename: "images.plist")
     
-    private var imageObjects = [ImageObject]()
+    public var imageObjects = [ImageObject]()
     
     public var imageObject: ImageObject?
     
@@ -37,10 +35,17 @@ class AddPhotoController: UIViewController {
     
     private var selectedImage: UIImage?
     
-    var photosDelegate: AddPhotoToCollection?
+    weak var photosDelegate: AddPhotoToCollection?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        guard let image = imageObject?.imageData else {
+            return
+        }
+        print("here \(imageObject?.description ?? "")")
+        textField.text = imageObject?.description
+        photoImage.image = UIImage(data: image)
         
         textField.delegate = self
         loadImageObjects()
@@ -71,18 +76,10 @@ class AddPhotoController: UIViewController {
             print("image is nil")
             return
         }
-        
-//        print("original image size is \(image.size)")
-        
-        // the size for resizing
+                
         let size = UIScreen.main.bounds.size
-        
-        // we will maintain the aspect ratio of the image
         let rect = AVMakeRect(aspectRatio: image.size, insideRect: CGRect(origin: CGPoint.zero, size: size))
-        
-        // resize image
         let resizeImage = image.resizeImage(to: rect.size.width, height: rect.size.height)
-        
         
         guard let resizedImageData = resizeImage.jpegData(compressionQuality: 1.0) else {
             return
@@ -99,10 +96,10 @@ class AddPhotoController: UIViewController {
         } catch {
             print("saving error")
         }
-//        showJournalVC()
+
         loadImageObjects()
         
-        photosDelegate?.updateCollectionView(images: imageObject)
+        photosDelegate?.updateCollectionView(images: imageObjects)
         
         self.dismiss(animated: true, completion: nil)
     }
@@ -127,23 +124,21 @@ class AddPhotoController: UIViewController {
             
             self.present(imagePickerController, animated: true, completion: nil)
         }
-        
-//        persistence.removeAll()
-        
+                
     }
     
-//    private func showJournalVC(_ photos: [ImageObject]? = nil) {
-//
-//        guard let journalController = storyboard?.instantiateViewController(identifier: "JournalController") as? JournalController else {
-//            fatalError("could not downcast to JournalController")
-//        }
-//
-//        guard let photos = photos else { return }
-//        loadImageObjects()
-//        journalController.imageObjects = photos
-//
-//        present(journalController, animated: true)
-//    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        guard let journalVC = segue.destination as? JournalController else { return }
+        
+        journalVC.imageDelegate = self
+        getImageData(imageObject!)
+    }
+    
+    func getImageData(_ image: ImageObject) {
+        self.photoImage.image = UIImage(data: image.imageData)
+        print(image.description)
+    }
     
 }
 
@@ -152,7 +147,7 @@ extension AddPhotoController: UITextFieldDelegate {
         
         textField.resignFirstResponder()
         
-        imageDescription = textField.text ?? "no event name"
+        imageDescription = textField.text ?? "no photo description"
         
         textField.text = ""
         

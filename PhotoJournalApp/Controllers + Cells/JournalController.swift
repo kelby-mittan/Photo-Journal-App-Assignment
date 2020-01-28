@@ -10,6 +10,10 @@ import UIKit
 import AVFoundation
 import DataPersistence
 
+protocol ImagePhoto: AnyObject {
+    func getImageData(_ image: ImageObject)
+}
+
 class JournalController: UIViewController {
     
     @IBOutlet var collectionView: UICollectionView!
@@ -20,17 +24,13 @@ class JournalController: UIViewController {
         }
     }
     
+    public var selectedImage: ImageObject?
+    
     public var persistence = DataPersistence<ImageObject>(filename: "images.plist")
     
     private var selectedIndex: IndexPath?
     
-//    private lazy var addPhotoController: UIViewController = {
-//        guard let photoController = storyboard?.instantiateViewController(identifier: "AddPhotoController") as? AddPhotoController else {
-//            fatalError("could not load nav controller")
-//        }
-//        photoController.dataPersistence = persistence
-//        return photoController
-//    }()
+    weak var imageDelegate: ImagePhoto?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,6 +39,17 @@ class JournalController: UIViewController {
 
         loadImageObjects()
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let addPhotoVC = segue.destination as? AddPhotoController,let Indexpath = collectionView.indexPathsForSelectedItems?.first else {
+            return
+        }
+//        addPhotoVC.photosDelegate = self
+        addPhotoVC.imageObject = imageObjects[Indexpath.row]
+        print(imageObjects[Indexpath.row].description)
+        
+    }
+    
     @IBAction func addPhotoButton(_ sender: UIBarButtonItem) {
         showAddPhotoVC()
     }
@@ -58,8 +69,7 @@ class JournalController: UIViewController {
         }
         
         createPhotoController.imageObject = photo
-        createPhotoController.photosDelegate = self
-        
+//        print("Not working \(photo)")
         present(createPhotoController, animated: true)
     }
     
@@ -81,8 +91,12 @@ extension JournalController: UICollectionViewDataSource {
         
         cell.index = indexPath
         selectedIndex = indexPath
+        selectedImage = imageObject
+        
+        imageDelegate?.getImageData(imageObject)
         
         cell.configureCell(for: imageObject)
+    
         return cell
     }
 }
@@ -100,10 +114,16 @@ extension JournalController: JournalCollection {
         print("\(index) is clicked")
         
         guard let indexPath = photoCell.index else { return }
+
+        let imageObject = imageObjects[indexPath.row]
         
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        let editAction = UIAlertAction(title: "Edit", style: .default)
+        let editAction = UIAlertAction(title: "Edit", style: .default) { [weak self] alertAction in
+            self?.showAddPhotoVC(imageObject)
+//            print(self?.imageObjects[indexPath.row].description)
+        }
+        
         let shareAction = UIAlertAction(title: "Share", style: .default)
         
         let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [weak self] alertAction in
@@ -136,13 +156,18 @@ extension JournalController: JournalCollection {
 }
 
 extension JournalController: AddPhotoToCollection {
-    func updateCollectionView(images: ImageObject) {
+    
+    
+    
+    func updateCollectionView(images: [ImageObject]) {
 //        imageObjects.insert(images, at: 0)
-        do {
-            try persistence.createItem(images)
-        } catch {
-            print("could not create")
-        }
+//        do {
+//            try persistence.createItem(images)
+//        } catch {
+//            print("could not create")
+//        }
+        loadImageObjects()
+        self.imageObjects = images
     }
 }
 
