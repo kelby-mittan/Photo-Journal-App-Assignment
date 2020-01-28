@@ -37,18 +37,27 @@ class AddPhotoController: UIViewController, ImagePhoto {
     
     weak var photosDelegate: AddPhotoToCollection?
     
+    public var isEditingPhoto = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        textField.delegate = self
+        updateUI()
+        loadImageObjects()
+    }
+    
+    private func updateUI() {
         guard let image = imageObject?.imageData else {
             return
         }
         print("here \(imageObject?.description ?? "")")
         textField.text = imageObject?.description
         photoImage.image = UIImage(data: image)
-        
-        textField.delegate = self
-        loadImageObjects()
+        if imageDescription.isEmpty {
+            cameraButton.isEnabled = false
+            libraryButton.isEnabled = false
+        }
     }
     
     private func loadImageObjects() {
@@ -85,7 +94,10 @@ class AddPhotoController: UIViewController, ImagePhoto {
             return
         }
         
-        print("original image size is \(resizeImage.size)")
+//        if isEditingPhoto {
+//            cameraButton.isEnabled = false
+//            libraryButton.isEnabled = false
+//        }
         
         let imageObject = ImageObject(imageData: resizedImageData, date: Date(), description: imageDescription)
         
@@ -148,8 +160,6 @@ extension AddPhotoController: UITextFieldDelegate {
         textField.resignFirstResponder()
         
         imageDescription = textField.text ?? "no photo description"
-        
-        textField.text = ""
         
         return true
     }
