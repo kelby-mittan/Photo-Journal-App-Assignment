@@ -26,10 +26,7 @@ class JournalController: UIViewController {
     }
     
     public var selectedImage: ImageObject?
-    
     public var persistence = DataPersistence<ImageObject>(filename: "images.plist")
-    
-//    private var selectedIndex: IndexPath?
     public var isNewPhoto = false
     
     weak var imageDelegate: ImagePhoto?
@@ -68,7 +65,7 @@ class JournalController: UIViewController {
     private func showAddPhotoVC(_ photo: ImageObject? = nil) {
         
         guard let createPhotoController = storyboard?.instantiateViewController(identifier: "AddPhotoController") as? AddPhotoController else {
-            fatalError("could not downcast to CreateEventController")
+            fatalError("could not downcast to AddPhotoController")
         }
         createPhotoController.photosDelegate = self
         if !isNewPhoto {
@@ -76,10 +73,8 @@ class JournalController: UIViewController {
             createPhotoController.selectedImage = UIImage(data: photoData)
             createPhotoController.originalPhoto = photo
         }
-        
         present(createPhotoController, animated: true)
     }
-    
     
 }
 
@@ -95,13 +90,10 @@ extension JournalController: UICollectionViewDataSource {
         }
         let imageObject = imageObjects[indexPath.row]
         cell.cellDelegate = self
-        
         cell.index = indexPath
-//        selectedIndex = indexPath
+        
         selectedImage = imageObject
-        
         imageDelegate?.getImageData(imageObject)
-        
         cell.configureCell(for: imageObject)
     
         return cell
@@ -123,16 +115,12 @@ extension JournalController: JournalCollection {
         guard let indexPath = photoCell.index else { return }
 
         let imageObject = imageObjects[indexPath.row]
-        
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
         let editAction = UIAlertAction(title: "Edit", style: .default) { [weak self] alertAction in
             self?.showAddPhotoVC(imageObject)
-//            print(self?.imageObjects[indexPath.row].description)
         }
         
         let shareAction = UIAlertAction(title: "Share", style: .default)
-        
         let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [weak self] alertAction in
             self?.deletePhoto(indexPath: indexPath)
         }
@@ -150,11 +138,8 @@ extension JournalController: JournalCollection {
     private func deletePhoto(indexPath: IndexPath) {
         do {
             try persistence.deleteItem(at: indexPath.row)
-            
             imageObjects.remove(at: indexPath.row)
-            
             collectionView.deleteItems(at: [indexPath])
-            
         } catch {
             print("Error deleting")
         }
