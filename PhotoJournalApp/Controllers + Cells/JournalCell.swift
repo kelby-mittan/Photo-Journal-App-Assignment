@@ -17,7 +17,12 @@ class JournalCell: UICollectionViewCell {
     @IBOutlet var descriptionLabel: UILabel!
     @IBOutlet var dateLabel: UILabel!
     
-//    public var imageObject: ImageObject?
+    private lazy var dateFormatter:  DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMM d, yyyy, hh:mm a"
+        formatter.timeZone = .current
+        return formatter
+    }()
     
     var cellDelegate: JournalCollection?
     var index: IndexPath?
@@ -25,7 +30,7 @@ class JournalCell: UICollectionViewCell {
     func configureCell(for photo: ImageObject) {
         layer.cornerRadius = 20
         descriptionLabel.text = photo.description
-        dateLabel.text = photo.date.description
+        dateLabel.text = dateFormatter.string(from: photo.date)
         
         guard let image = UIImage(data: photo.imageData) else {
             return
