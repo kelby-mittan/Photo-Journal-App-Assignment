@@ -46,7 +46,7 @@ class JournalController: UIViewController {
             return
         }
         addPhotoVC.photosDelegate = self
-        addPhotoVC.imageObject = imageObjects[Indexpath.row]
+        addPhotoVC.originalPhoto = imageObjects[Indexpath.row]
         print(imageObjects[Indexpath.row].description)
         
     }
@@ -68,8 +68,10 @@ class JournalController: UIViewController {
         guard let createPhotoController = storyboard?.instantiateViewController(identifier: "AddPhotoController") as? AddPhotoController else {
             fatalError("could not downcast to CreateEventController")
         }
+        guard let photoData = photo?.imageData else {return}
         createPhotoController.photosDelegate = self
-        createPhotoController.imageObject = photo
+        createPhotoController.originalPhoto = photo
+        createPhotoController.selectedImage = UIImage(data: photoData)
         present(createPhotoController, animated: true)
     }
     
@@ -168,6 +170,7 @@ extension JournalController: AddPhotoToCollection {
     
     func editPhoto(original: ImageObject, newPhoto: ImageObject) {
         let index = imageObjects.firstIndex(of: original)!
+        imageObjects.remove(at: index)
         imageObjects.insert(newPhoto, at: index)
         persistence.update(original, with: newPhoto)
     }

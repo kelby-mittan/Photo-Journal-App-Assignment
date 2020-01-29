@@ -30,11 +30,11 @@ class AddPhotoController: UIViewController, ImagePhoto {
     
     public var imageObjects = [ImageObject]()
     
-    public var imageObject: ImageObject?
+    public var originalPhoto: ImageObject?
     
     public var imageDescription = String()
     
-    private var selectedImage: UIImage?
+    public var selectedImage: UIImage?
     
     weak var photosDelegate: AddPhotoToCollection?
     
@@ -48,11 +48,13 @@ class AddPhotoController: UIViewController, ImagePhoto {
     }
     
     private func updateUI() {
-        guard let image = imageObject?.imageData else {
+        guard let image = originalPhoto?.imageData else {
             return
         }
-        print("here \(imageObject?.description ?? "")")
-        textField.text = imageObject?.description
+        
+        print("here \(originalPhoto?.description ?? "")")
+        
+        textField.text = originalPhoto?.description
         photoImage.image = UIImage(data: image)
         if imageDescription.isEmpty {
             cameraButton.isEnabled = false
@@ -89,10 +91,13 @@ class AddPhotoController: UIViewController, ImagePhoto {
         let imageObject = ImageObject(imageData: resizedImageData, date: Date(), description: imageDescription)
         
         if cameraButton.isEnabled {
-            
             photosDelegate?.updateCollectionView(images: imageObject)
         } else {
-//            photosDelegate?.editPhoto(original: , newPhoto: <#T##ImageObject#>)
+            guard let original = originalPhoto else {
+                print("original not there")
+                return
+            }
+            photosDelegate?.editPhoto(original: original, newPhoto: imageObject)
         }
         
         
@@ -125,7 +130,7 @@ class AddPhotoController: UIViewController, ImagePhoto {
         guard let journalVC = segue.destination as? JournalController else { return }
         
         journalVC.imageDelegate = self
-        getImageData(imageObject!)
+        getImageData(originalPhoto!)
     }
     
     func getImageData(_ image: ImageObject) {
