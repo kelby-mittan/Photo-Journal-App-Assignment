@@ -11,7 +11,7 @@ import DataPersistence
 import AVFoundation
 
 protocol AddPhotoToCollection: AnyObject {
-    func updateCollectionView(images: [ImageObject])
+    func updateCollectionView(images: ImageObject)
 }
 
 class AddPhotoController: UIViewController, ImagePhoto {
@@ -58,6 +58,10 @@ class AddPhotoController: UIViewController, ImagePhoto {
             cameraButton.isEnabled = false
             libraryButton.isEnabled = false
         }
+        
+//        if imageDescription == "" || imageObject?.imageData == nil {
+//            saveButton.isEnabled = false
+//        }
     }
     
     private func loadImageObjects() {
@@ -94,24 +98,19 @@ class AddPhotoController: UIViewController, ImagePhoto {
             return
         }
         
-//        if isEditingPhoto {
-//            cameraButton.isEnabled = false
-//            libraryButton.isEnabled = false
-//        }
-        
         let imageObject = ImageObject(imageData: resizedImageData, date: Date(), description: imageDescription)
         
-        imageObjects.insert(imageObject, at: 0)
-        
-        do {
-            try dataPersistence.createItem(imageObject)
-        } catch {
-            print("saving error")
-        }
+//        imageObjects.insert(imageObject, at: 0)
+//
+//        do {
+//            try dataPersistence.createItem(imageObject)
+//        } catch {
+//            print("saving error")
+//        }
 
-        loadImageObjects()
+//        loadImageObjects()
         
-        photosDelegate?.updateCollectionView(images: imageObjects)
+        photosDelegate?.updateCollectionView(images: imageObject)
         
         self.dismiss(animated: true, completion: nil)
     }
@@ -129,11 +128,8 @@ class AddPhotoController: UIViewController, ImagePhoto {
     
     @IBAction func cameraButtonPressed(_ sender: UIBarButtonItem) {
         if UIImagePickerController.isSourceTypeAvailable(.camera){
-            
             imagePickerController.delegate = self as UIImagePickerControllerDelegate & UINavigationControllerDelegate
-            
             imagePickerController.sourceType = .camera
-            
             self.present(imagePickerController, animated: true, completion: nil)
         }
                 

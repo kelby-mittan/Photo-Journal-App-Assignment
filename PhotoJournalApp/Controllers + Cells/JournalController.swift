@@ -20,6 +20,7 @@ class JournalController: UIViewController {
     
     public var imageObjects = [ImageObject]() {
         didSet {
+            
             collectionView.reloadData()
         }
     }
@@ -44,7 +45,7 @@ class JournalController: UIViewController {
         guard let addPhotoVC = segue.destination as? AddPhotoController,let Indexpath = collectionView.indexPathsForSelectedItems?.first else {
             return
         }
-//        addPhotoVC.photosDelegate = self
+        addPhotoVC.photosDelegate = self
         addPhotoVC.imageObject = imageObjects[Indexpath.row]
         print(imageObjects[Indexpath.row].description)
         
@@ -67,9 +68,8 @@ class JournalController: UIViewController {
         guard let createPhotoController = storyboard?.instantiateViewController(identifier: "AddPhotoController") as? AddPhotoController else {
             fatalError("could not downcast to CreateEventController")
         }
-        
+        createPhotoController.photosDelegate = self
         createPhotoController.imageObject = photo
-//        print("Not working \(photo)")
         present(createPhotoController, animated: true)
     }
     
@@ -151,23 +151,19 @@ extension JournalController: JournalCollection {
         } catch {
             print("Error deleting")
         }
-        
     }
 }
 
 extension JournalController: AddPhotoToCollection {
     
-    
-    
-    func updateCollectionView(images: [ImageObject]) {
-//        imageObjects.insert(images, at: 0)
-//        do {
-//            try persistence.createItem(images)
-//        } catch {
-//            print("could not create")
-//        }
-        loadImageObjects()
-        self.imageObjects = images
+    func updateCollectionView(images: ImageObject) {
+        imageObjects.append(images)
+        do {
+            try persistence.createItem(images)
+            
+        } catch {
+            print("could not create")
+        }
     }
 }
 
