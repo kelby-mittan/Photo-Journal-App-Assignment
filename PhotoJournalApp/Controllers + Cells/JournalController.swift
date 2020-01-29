@@ -29,7 +29,8 @@ class JournalController: UIViewController {
     
     public var persistence = DataPersistence<ImageObject>(filename: "images.plist")
     
-    private var selectedIndex: IndexPath?
+//    private var selectedIndex: IndexPath?
+    public var isNewPhoto = false
     
     weak var imageDelegate: ImagePhoto?
     
@@ -52,6 +53,7 @@ class JournalController: UIViewController {
     }
     
     @IBAction func addPhotoButton(_ sender: UIBarButtonItem) {
+        isNewPhoto = true
         showAddPhotoVC()
     }
     
@@ -68,10 +70,13 @@ class JournalController: UIViewController {
         guard let createPhotoController = storyboard?.instantiateViewController(identifier: "AddPhotoController") as? AddPhotoController else {
             fatalError("could not downcast to CreateEventController")
         }
-        guard let photoData = photo?.imageData else {return}
         createPhotoController.photosDelegate = self
-        createPhotoController.originalPhoto = photo
-        createPhotoController.selectedImage = UIImage(data: photoData)
+        if !isNewPhoto {
+            guard let photoData = photo?.imageData else {return}
+            createPhotoController.selectedImage = UIImage(data: photoData)
+            createPhotoController.originalPhoto = photo
+        }
+        
         present(createPhotoController, animated: true)
     }
     
@@ -92,7 +97,7 @@ extension JournalController: UICollectionViewDataSource {
         cell.cellDelegate = self
         
         cell.index = indexPath
-        selectedIndex = indexPath
+//        selectedIndex = indexPath
         selectedImage = imageObject
         
         imageDelegate?.getImageData(imageObject)

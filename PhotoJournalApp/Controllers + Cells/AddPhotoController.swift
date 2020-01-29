@@ -44,8 +44,13 @@ class AddPhotoController: UIViewController, ImagePhoto {
         super.viewDidLoad()
         
         textField.delegate = self
+        saveButton.isEnabled = false
         updateUI()
     }
+    
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(true)
+//    }
     
     private func updateUI() {
         guard let image = originalPhoto?.imageData else {
@@ -144,11 +149,15 @@ extension AddPhotoController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         textField.resignFirstResponder()
-        
+        if textField.text != "" && photoImage.image != nil {
+            saveButton.isEnabled = true
+        }
         imageDescription = textField.text ?? "no photo description"
-        
+//        print(photoImage.image?.description)
         return true
     }
+    
+    
 }
 
 extension AddPhotoController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
