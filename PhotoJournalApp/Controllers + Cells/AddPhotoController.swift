@@ -12,6 +12,7 @@ import AVFoundation
 
 protocol AddPhotoToCollection: AnyObject {
     func updateCollectionView(images: ImageObject)
+    func editPhoto(original: ImageObject, newPhoto: ImageObject)
 }
 
 class AddPhotoController: UIViewController, ImagePhoto {
@@ -24,7 +25,7 @@ class AddPhotoController: UIViewController, ImagePhoto {
     @IBOutlet var cameraButton: UIBarButtonItem!
     
     private let imagePickerController = UIImagePickerController()
-        
+    
     public var dataPersistence = DataPersistence<ImageObject>(filename: "images.plist")
     
     public var imageObjects = [ImageObject]()
@@ -44,7 +45,6 @@ class AddPhotoController: UIViewController, ImagePhoto {
         
         textField.delegate = self
         updateUI()
-        loadImageObjects()
     }
     
     private func updateUI() {
@@ -57,18 +57,6 @@ class AddPhotoController: UIViewController, ImagePhoto {
         if imageDescription.isEmpty {
             cameraButton.isEnabled = false
             libraryButton.isEnabled = false
-        }
-        
-//        if imageDescription == "" || imageObject?.imageData == nil {
-//            saveButton.isEnabled = false
-//        }
-    }
-    
-    private func loadImageObjects() {
-        do {
-            imageObjects = try dataPersistence.loadItems()
-        } catch {
-            print("could not get photos")
         }
     }
     
@@ -89,7 +77,7 @@ class AddPhotoController: UIViewController, ImagePhoto {
             print("image is nil")
             return
         }
-                
+        
         let size = UIScreen.main.bounds.size
         let rect = AVMakeRect(aspectRatio: image.size, insideRect: CGRect(origin: CGPoint.zero, size: size))
         let resizeImage = image.resizeImage(to: rect.size.width, height: rect.size.height)
@@ -100,17 +88,14 @@ class AddPhotoController: UIViewController, ImagePhoto {
         
         let imageObject = ImageObject(imageData: resizedImageData, date: Date(), description: imageDescription)
         
-//        imageObjects.insert(imageObject, at: 0)
-//
-//        do {
-//            try dataPersistence.createItem(imageObject)
-//        } catch {
-//            print("saving error")
-//        }
-
-//        loadImageObjects()
+        if cameraButton.isEnabled {
+            
+            photosDelegate?.updateCollectionView(images: imageObject)
+        } else {
+//            photosDelegate?.editPhoto(original: , newPhoto: <#T##ImageObject#>)
+        }
         
-        photosDelegate?.updateCollectionView(images: imageObject)
+        
         
         self.dismiss(animated: true, completion: nil)
     }
@@ -132,7 +117,7 @@ class AddPhotoController: UIViewController, ImagePhoto {
             imagePickerController.sourceType = .camera
             self.present(imagePickerController, animated: true, completion: nil)
         }
-                
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

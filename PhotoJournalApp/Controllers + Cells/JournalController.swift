@@ -157,13 +157,19 @@ extension JournalController: JournalCollection {
 extension JournalController: AddPhotoToCollection {
     
     func updateCollectionView(images: ImageObject) {
-        imageObjects.append(images)
+        imageObjects.insert(images, at: 0)
         do {
             try persistence.createItem(images)
             
         } catch {
             print("could not create")
         }
+    }
+    
+    func editPhoto(original: ImageObject, newPhoto: ImageObject) {
+        let index = imageObjects.firstIndex(of: original)!
+        imageObjects.insert(newPhoto, at: index)
+        persistence.update(original, with: newPhoto)
     }
 }
 
