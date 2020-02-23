@@ -35,7 +35,7 @@ class JournalController: UIViewController {
         super.viewDidLoad()
         collectionView.dataSource = self
         collectionView.delegate = self
-
+        
         loadImageObjects()
     }
     
@@ -95,7 +95,7 @@ extension JournalController: UICollectionViewDataSource {
         selectedImage = imageObject
         imageDelegate?.getImageData(imageObject)
         cell.configureCell(for: imageObject)
-    
+        
         return cell
     }
 }
@@ -104,7 +104,8 @@ extension JournalController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let maxWidth: CGFloat = UIScreen.main.bounds.size.width
         let itemWidth: CGFloat = maxWidth * 0.80
-        return CGSize(width: itemWidth, height: itemWidth)  }
+        return CGSize(width: itemWidth, height: itemWidth)
+    }
 }
 
 extension JournalController: JournalCollection {
@@ -113,7 +114,7 @@ extension JournalController: JournalCollection {
         print("\(index) is clicked")
         
         guard let indexPath = photoCell.index else { return }
-
+        
         let imageObject = imageObjects[indexPath.row]
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let editAction = UIAlertAction(title: "Edit", style: .default) { [weak self] alertAction in
