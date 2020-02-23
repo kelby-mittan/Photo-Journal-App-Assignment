@@ -137,10 +137,9 @@ extension JournalController: JournalCollection {
     }
     
     private func deletePhoto(indexPath: IndexPath) {
+        imageObjects.remove(at: indexPath.row)
         do {
             try persistence.deleteItem(at: indexPath.row)
-            imageObjects.remove(at: indexPath.row)
-            collectionView.deleteItems(at: [indexPath])
         } catch {
             print("Error deleting")
         }
