@@ -9,10 +9,23 @@
 import UIKit
 import DataPersistence
 import AVFoundation
+import CoreImage
 
 protocol AddPhotoToCollection: AnyObject {
     func updateCollectionView(images: ImageObject)
     func editPhoto(original: ImageObject, newPhoto: ImageObject)
+}
+
+struct Filter {
+    var filterName: String
+    var filterEffectValue: Any?
+    var filterEffectValueName: String?
+    
+    init(filterName: String, filterEffectValue: Any?, filterEffectValueName: String?) {
+        self.filterName = filterName
+        self.filterEffectValue = filterEffectValue
+        self.filterEffectValueName = filterEffectValueName
+    }
 }
 
 class AddPhotoController: UIViewController, ImagePhoto {
@@ -40,12 +53,15 @@ class AddPhotoController: UIViewController, ImagePhoto {
     
     public var isEditingPhoto = false
     
+    public var originalImage: UIImage?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         textField.delegate = self
         saveButton.isEnabled = false
         updateUI()
+        
     }
     
 //    override func viewWillAppear(_ animated: Bool) {
@@ -130,6 +146,73 @@ class AddPhotoController: UIViewController, ImagePhoto {
         
     }
     
+    private func applyFilter(image: UIImage, filterEffect: Filter) -> UIImage? {
+        
+        guard let cgImage = image.cgImage, let openGLContext = EAGLContext(api: .openGLES3) else {
+            return nil
+        }
+        
+        let context = CIContext(eaglContext: openGLContext)
+        let ciImage = CIImage(cgImage: cgImage)
+        
+        let filter = CIFilter(name: filterEffect.filterName)
+        
+        filter?.setValue(ciImage, forKey: kCIInputImageKey)
+        
+        if let filterEffectValue = filterEffect.filterEffectValue,
+           let filterEffectValueName = filterEffect.filterEffectValueName {
+            
+            filter?.setValue(filterEffectValue, forKey: filterEffectValueName)
+        }
+        
+        var filteredImage: UIImage?
+        
+        if let output = filter?.value(forKey: kCIOutputImageKey) as? CIImage,
+           let cgiImageResult = context.createCGImage(output, from: output.extent) {
+            
+            filteredImage = UIImage(cgImage: cgiImageResult)
+        }
+        
+        return filteredImage
+    }
+    
+    
+    @IBAction func applySepia(_ sender: UIButton) {
+        guard let image = photoImage.image else {
+            return
+        }
+        
+        photoImage.image = applyFilter(image: image, filterEffect: Filter(filterName: "CISepiaTone", filterEffectValue: 0.9, filterEffectValueName: kCIInputIntensityKey))
+    }
+    
+    @IBAction func applyBlur(_ sender: UIButton) {
+        guard let image = photoImage.image else {
+            return
+        }
+        
+        photoImage.image = applyFilter(image: image, filterEffect: Filter(filterName: "CIGaussianBlur", filterEffectValue: 9.0, filterEffectValueName: kCIInputRadiusKey))
+    }
+    
+    @IBAction func applyNoir(_ sender: UIButton) {
+        guard let image = photoImage.image else {
+            return
+        }
+        
+        photoImage.image = applyFilter(image: image, filterEffect: Filter(filterName: "CIPhotoEffectNoir", filterEffectValue: nil, filterEffectValueName: nil))
+    }
+    
+    @IBAction func applyProcess(_ sender: UIButton) {
+        guard let image = photoImage.image else {
+            return
+        }
+        
+        photoImage.image = applyFilter(image: image, filterEffect: Filter(filterName: "CIPhotoEffectProcess", filterEffectValue: 14.0, filterEffectValueName: nil))
+    }
+    
+    @IBAction func resetImage(_ sender: UIButton) {
+        photoImage.image = originalImage
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         guard let journalVC = segue.destination as? JournalController else { return }
@@ -156,8 +239,6 @@ extension AddPhotoController: UITextFieldDelegate {
 //        print(photoImage.image?.description)
         return true
     }
-    
-    
 }
 
 extension AddPhotoController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -174,6 +255,7 @@ extension AddPhotoController: UIImagePickerControllerDelegate, UINavigationContr
         }
         selectedImage = image
         photoImage.image = image
+        originalImage = image
         dismiss(animated: true)
     }
 }
